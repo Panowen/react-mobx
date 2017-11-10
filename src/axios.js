@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 import axios from 'axios';
 
+@observer
 class Axios extends Component {
   constructor(props) {
     super(props);
@@ -8,6 +10,7 @@ class Axios extends Component {
   }
 
   handleClick() {
+    this.props.state.title += 1;
     axios
       .post('/api/login', {
         firstName: 'Fred',
@@ -24,6 +27,7 @@ class Axios extends Component {
   render() {
     return (
       <div>
+        <div> props.state.title: { this.props.state.title } </div>
         <button onClick={ this.handleClick }> click me</button>
       </div>
     );
