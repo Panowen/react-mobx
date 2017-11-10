@@ -1,0 +1,26 @@
+{
+    "presets": [
+        [
+            "es2015",
+            {
+                "modules": false
+            }
+        ]
+    ],
+    "plugins": [
+        "react-hot-loader/babel",
+        "transform-react-jsx"
+    ],
+    "comments": false,
+    "env": {
+        "test": {
+            "presets": [
+                "latest",
+                "stage-2"
+            ],
+            "plugins": [
+                "istanbul"
+            ]
+        }
+    }
+}
