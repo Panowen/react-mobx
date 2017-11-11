@@ -8,9 +8,11 @@
         ]
     ],
     "plugins": [
+        "syntax-dynamic-import",
         "transform-decorators-legacy",
         "react-hot-loader/babel",
-        "transform-react-jsx"
+        "transform-react-jsx",
+        ["import", { "libraryName": "antd", "style": "css" }]
     ],
     "comments": false,
     "env": {

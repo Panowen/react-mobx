@@ -1,28 +1,29 @@
 const path = require('path');
 const webpack = require('webpack');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 function resolve(dir) {
-  return path.join(__dirname, dir);
+  return path.join(__dirname, '..', dir);
 }
 
 module.exports = {
   entry: {
-    app: ['react-hot-loader/patch', './src/entry.js'],
-    vendor: ['react'],
+    app: './src/entry.js',
+    vendor: ['react', 'react-router', 'mobx', 'antd'],
   },
   output: {
-    filename: '[name].js',
+    filename: '[name]-[hash].js',
     chunkFilename: './static/js/[name].chunk.js',
     path: resolve('/dist'),
-    publicPath: '/',
+    publicPath: './',
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     alias: {
       '@': resolve('src'),
+      STYLE: resolve('src/style'),
       CONSTANTS: resolve('constants'),
     },
   },
@@ -30,8 +31,19 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader?modules', 'sass-loader'],
+        }),
+      },
+      {
         test: /\.(s)?css$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        exclude: /node_modules|dist/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader?modules', 'sass-loader'],
+        }),
       },
       {
         test: /\.(js|jsx)$/,
@@ -62,35 +74,15 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    hot: true,
-    historyApiFallback: true,
-    clientLogLevel: 'none',
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 9011,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:9001',
-        pathRewrite: { '^/api': '' },
-      },
-    },
-    stats: 'minimal',
-    overlay: {
-      warnings: true,
-      errors: true,
-    },
-  },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin(['../dist']),
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: resolve('src/index.html'),
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'common', // Specify the common bundle's name.
     }),
-    // new ExtractTextPlugin('static/css/styles.css'),
-    new webpack.HotModuleReplacementPlugin(),
+    new ExtractTextPlugin('static/css/styles.css'),
     new webpack.NoEmitOnErrorsPlugin(),
   ],
 };

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class Test extends Component {
   render() {
     return (
-      <div> this is a test page</div>
+      <div> this is a test page 1w</div>
     );
   }
 }

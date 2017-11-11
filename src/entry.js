@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import { AppContainer } from 'react-hot-loader';
+import 'antd/dist/antd.css';
 import './style/app.scss';
 import App from './App';
 

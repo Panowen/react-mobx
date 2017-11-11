@@ -14,9 +14,18 @@
         "browser": true
     },
     "rules": {
+        "import/extensions": "off",
+        "import/no-unresolved": "off",
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
         "class-methods-use-this": "off",
         "react/jsx-no-undef": "off"
+    },
+    "settings": {
+        "import/resolver": {
+            "webpack": {
+                "config": "build/webpack.config.js"
+            }
+        }
     }
 }

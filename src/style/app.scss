@@ -1,7 +1,25 @@
 @import "./index.scss";
 
+:global(.text-center) {
+  text-align: center;
+}
+
+:global(.text-left) {
+  text-align: left;
+}
+
+:global(.text-right) {
+  text-align: right;
+}
+
+
+
+.a {
+  background: red;
+}
+
 body {
-  background: #f1f1f1;
+  background: #ededed;
 
   .App-logo {
     height: 50px;
