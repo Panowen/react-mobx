@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 function resolve(dir) {
@@ -11,13 +12,13 @@ function resolve(dir) {
 module.exports = {
   entry: {
     app: './src/entry.js',
-    vendor: ['react', 'react-router', 'mobx', 'antd'],
+    vendor: ['react', 'react-router', 'babel-polyfill', 'mobx', 'antd'],
   },
   output: {
-    filename: '[name]-[hash].js',
-    chunkFilename: './static/js/[name].chunk.js',
+    filename: './static/js/[name].[chunkhash].js',
+    chunkFilename: './static/js/[chunkhash].js',
     path: resolve('/dist'),
-    publicPath: './',
+    publicPath: '/',
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
@@ -27,18 +28,18 @@ module.exports = {
       CONSTANTS: resolve('constants'),
     },
   },
-  devtool: 'eval',
+  devtool: '#source-map',
   module: {
     rules: [
       {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader?modules', 'sass-loader'],
+          use: ['css-loader', 'sass-loader'],
         }),
       },
       {
-        test: /\.(s)?css$/,
+        test: /\.scss$/,
         exclude: /node_modules|dist/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
@@ -75,7 +76,9 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(['../dist']),
+    new CleanWebpackPlugin(['dist'], {
+      root: resolve(''),
+    }),
     new HtmlWebpackPlugin({
       template: resolve('src/index.html'),
     }),
@@ -83,6 +86,11 @@ module.exports = {
       name: 'common', // Specify the common bundle's name.
     }),
     new ExtractTextPlugin('static/css/styles.css'),
-    new webpack.NoEmitOnErrorsPlugin(),
+    new CopyWebpackPlugin([
+      {
+        from: resolve('static'),
+        to: resolve('dist/static'),
+      },
+    ]),
   ],
 };

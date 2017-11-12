@@ -8,7 +8,7 @@ function resolve(dir) {
 
 module.exports = {
   entry: {
-    app: ['react-hot-loader/patch', './src/entry.js'],
+    app: ['babel-polyfill', 'react-hot-loader/patch', './src/entry.js'],
     vendor: ['react', 'react-router', 'mobx', 'antd'],
   },
   output: {
@@ -25,7 +25,7 @@ module.exports = {
       CONSTANTS: resolve('constants'),
     },
   },
-  devtool: 'eval',
+  devtool: '#cheap-module-eval-source-map',
   module: {
     rules: [
       {
@@ -78,10 +78,7 @@ module.exports = {
       },
     },
     stats: 'minimal',
-    overlay: {
-      warnings: true,
-      errors: true,
-    },
+    overlay: true,
   },
   plugins: [
     new HtmlWebpackPlugin({

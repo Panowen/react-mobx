@@ -1,34 +1,38 @@
 import React from 'react';
 import Login from '@/pages/login';
-import asyncComponent from '@/components/AsyncComponent';
-import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
+import asyncComponent from '@/components/AsyncImport';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 
 const state = {
-  login: false,
+  login: true,
 };
 
-const route = [
+const routes = [
   {
     path: '/login',
     component: Login,
   },
   {
     path: '/',
-    needLayOut: true,
+    exact: window.location.pathname === '/login',
     component: (e) => {
-      console.log(e.location.pathname);
-      return state.login || e.location.pathname === '/login' ? <div>3333</div> : <Redirect to={{
+      if (state.login || e.location.pathname === '/login') {
+        const Layout = asyncComponent(() => import('@/components/Layout'));
+        return <Layout {...e}/>;
+      }
+
+      return <Redirect to={{
         pathname: '/login',
       }}/>;
     },
-    children: [
+    route: [
       {
         path: '/about',
         component: asyncComponent(() => import('@/pages/test')),
       }, {
         path: '/topics',
         component: () => (<div>123</div>),
-        children: [{
+        route: [{
           name: 'topic A',
           path: '/topics/a',
           component: () => (<div>123</div>),
@@ -42,36 +46,36 @@ const route = [
   },
 ];
 
-const loopChildren = (result = [], routes) => {
-  routes.forEach((item, index) => {
-    result.push(<Route key={index + Math.random()}
-                       exact={!item.needLayOut}
-                       path={item.path}
-                       render={(props) => <item.component {...props} children={item.children}/>
-                       }/>);
-    if (item.children && item.children.length) {
-      result.concat(loopChildren(result, item.children));
+const loopChildren = (result = [], route) => {
+  route.forEach((item, index) => {
+    let child = null;
+
+    if (item.route && item.route.length) {
+      child = loopChildren([], item.route);
     }
+    result.push(<Route key={index + Math.random()}
+                       path={item.path}
+                       exact={item.exact}
+                       render={(props) => <item.component children={child} {...props}>
+                       </item.component>
+                       }>
+    </Route>);
   });
   return result;
 };
 
-const getRoutes = (routes) => {
-  const result = loopChildren([], routes);
+const getRoutes = (route) => {
+  const result = loopChildren([], route);
   return result;
 };
 
-export default () => {
-  const AllRoute = getRoutes(route);
-  return <Router>
-    <div>
-      <ul>
-        <Switch>
-          {
-            AllRoute
-          }
-        </Switch>
-      </ul>
-    </div>
-  </Router>;
-};
+const Allroute = getRoutes(routes);
+export default () => <Router>
+  <div>
+    <ul>
+      {
+        Allroute
+      }
+    </ul>
+  </div>
+</Router>;
